@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as faceapi from 'face-api.js';
+import { DeleteOutlined } from '@ant-design/icons'
 
 
 const expressionMap: any = {
@@ -9,7 +10,6 @@ const expressionMap: any = {
   "surprised": '惊讶',
 }
 
-const Hidden = true;
 
 function getExpressionResult(expression: any) {
   if (!expression) return;
@@ -39,6 +39,7 @@ export function Expression({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [expression, setExpression] = useState<string | undefined>('');
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     if (onExpressionChange) {
@@ -47,11 +48,11 @@ export function Expression({
   }, [expression]);
 
   async function run() {
-    await faceapi.nets.tinyFaceDetector.load('/widgets/');
+    await faceapi.nets.tinyFaceDetector.load('/antd-pro-expression-theme/widgets/');
 
-    await faceapi.loadSsdMobilenetv1Model('/widgets/');
-    await faceapi.loadFaceLandmarkModel('/widgets/');
-    await faceapi.loadFaceExpressionModel('/widgets/');
+    await faceapi.loadSsdMobilenetv1Model('/antd-pro-expression-theme/widgets/');
+    await faceapi.loadFaceLandmarkModel('/antd-pro-expression-theme/widgets/');
+    await faceapi.loadFaceExpressionModel('/antd-pro-expression-theme/widgets/');
 
     const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
     if (videoRef.current) {
@@ -81,7 +82,24 @@ export function Expression({
   }
 
   return (
-    <div style={{ opacity: Hidden ? 0 : 1  }} >
+    <div style={{ opacity: hidden ? 0 : 1 }} >
+      <div style={{
+        opacity: 1,
+        width: 640,
+        height: 480,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: hidden ? 0 : 10003,
+        color: 'red',
+      }}>
+        <div
+          style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
+          onClick={() => { setHidden(true) }}
+        >
+          <DeleteOutlined />
+        </div>
+      </div>
       <video
         style={{
           background: '#fff',
@@ -90,7 +108,7 @@ export function Expression({
           position: 'fixed',
           top: 0,
           left: 0,
-          zIndex: Hidden ? 0 : 10001
+          zIndex: hidden ? 0 : 10001
         }}
         onLoadedMetadata={() => { onPlay() }}
         id="inputVideo"
@@ -107,7 +125,7 @@ export function Expression({
           position: 'fixed',
           top: 0,
           left: 0,
-          zIndex: Hidden ? 0 : 10001,
+          zIndex: hidden ? 0 : 10001,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

@@ -15,6 +15,9 @@ export default defineConfig({
    */
   hash: true,
   publicPath: '/antd-pro-expression-theme/',
+  history: {
+    type: 'hash',
+  }
 
   /**
    * @name 兼容性设置
